@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include <windows.h> //sleep
 
 #define righe 10
@@ -10,7 +8,7 @@
 #define slotPieno '@'
 #define slotCoperto '#'
 #define slotAffondato 'O'
-#define Mancato 'X'
+#define slotMancato 'X'
 #define maxGiocatori 2
 #define totNavi 20
 
@@ -36,6 +34,29 @@ void main()
         }
 
     }
+    printf("\n\n                                             |__\n");
+    printf("                                             |\\/\n");
+    printf("                                             ---\n");
+    printf("                                             / | [\n");
+    printf("                                      !      | |||\n");
+    printf("                                    _/|     _/|-++'\n");
+    printf("                                +  +--|    |--|--|_ |-\n");
+    printf("                             { /|__|  |/\\__|  |--- |||__/\n");
+    printf("                            +---------------___[}-_===_.'____                 /\\\n");
+    printf("                        ____`-' ||___-{]_| _[}-  |     |_[___\\==--            \\/   _\n");
+    printf("         __..._____--==/___]_|__|_____________________________[___\\==--____,------' .7\n");
+    printf("        |                                                                     BB-61/\n");
+    printf("         \\_________________________________________________________________________|\n\n");
+    printf("\n\n\n      ______   _______ __________________ _        _______  _______          _________ _______\n");
+    printf("    (  ___ \\ (  ___  )\\__   __/\\__   __/( \\      (  ____ \\(  ____ \\|\\     /|\\__   __/(  ____ )\n");
+    printf("    | (   ) )| (   ) |   ) (      ) (   | (      | (    \\/| (    \\/| )   ( |   ) (   | (    )|\n");
+    printf("    | (__/ / | (___) |   | |      | |   | |      | (__    | (_____ | (___) |   | |   | (____)|\n");
+    printf("    |  __ (  |  ___  |   | |      | |   | |      |  __)   (_____  )|  ___  |   | |   |  _____)\n");
+    printf("    | (  \\ \\ | (   ) |   | |      | |   | |      | (            ) || (   ) |   | |   | ( \n");
+    printf("    | )___) )| )   ( |   | |      | |   | (____/\\| (____/\\/\\____) || )   ( |___) (___| )\n");
+    printf("    |/ \\___/ |/     \\|   )_(      )_(   (_______/(_______/\\_______)|/     \\|\\_______/|/\n\n\n");
+    printf("                                 Clicca invio per continuare\n");
+    getchar();
     fase = 0;
     for (i = 0; i < maxGiocatori; i++)
     {
@@ -180,64 +201,75 @@ void deployNavi (char tipoNave [], int rNave, int cNave, int numNave, int maxNav
     case 1:
         do
         {
-            for (i = 1; i < maxGiocatori + 1; i++)
+            for (i = 0; i < maxGiocatori; i++)
             {
-                player (i);
+                player (i - 1);
                 mappa(matrix, i, matrixCoperta, fase);
-                printf("\n> Seleziona la riga da attaccare");
                 do
                 {
-                    fflush(stdin);
-                    printf("\n> ");
-                    controlloInput = scanf("%d", &numRiga);
-                    if (controlloInput != 1 || numRiga < 1 || numRiga > 10)
+                    printf("\n> Seleziona la riga da attaccare");
+                    do
                     {
-                        printf("[!] Errore, inserisci un valore valido\n");
+                        fflush(stdin);
+                        printf("\n> ");
+                        controlloInput = scanf("%d", &numRiga);
+                        if (controlloInput != 1 || numRiga < 1 || numRiga > 10)
+                        {
+                            printf("[!] Errore, inserisci un valore valido\n");
+                        }
                     }
-                }
-                while (controlloInput != 1 || numRiga < 1 || numRiga > 10);
-                numRiga--;
+                    while (controlloInput != 1 || numRiga < 1 || numRiga > 10);
+                    numRiga--;
 
-                printf("\n");
-                printf("> Seleziona la colonna da attaccare");
-                do
-                {
-                    fflush(stdin);
-                    printf("\n> ");
-                    scanf("%c", &colonna);
-                    colonna = toupper(colonna);
-                    if (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J')
+                    printf("\n");
+                    printf("> Seleziona la colonna da attaccare");
+                    do
                     {
-                        printf("[!] Errore, inserisci un valore valido\n");
+                        fflush(stdin);
+                        printf("\n> ");
+                        scanf("%c", &colonna);
+                        colonna = toupper(colonna);
+                        if (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J')
+                        {
+                            printf("[!] Errore, inserisci un valore valido\n");
+                        }
+                    }
+                    while (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J');
+                    numColonna = colonna - 65;
+
+                    if (matrixCoperta [numRiga][numColonna][i] == slotAffondato || matrixCoperta [numRiga][numColonna][i] == slotMancato)
+                    {
+                        fflush(stdin);
+                        printf("[!] Errore, non puoi colpire nuovamente questo slot\n");
+                        getchar();
                     }
                 }
-                while (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J');
-                numColonna = colonna - 65;
-                if (matrix [numRiga][numColonna][i] == '@')
+                while (matrixCoperta [numRiga][numColonna][i] == slotAffondato || matrixCoperta [numRiga][numColonna][i] == slotMancato);
+                if (matrix [numRiga][numColonna][i] == slotPieno)
                 {
                     printf("\n\n> Hai colpito una nave nemica!");
-                    matrixCoperta [numRiga][numColonna][i] = 'O';
+                    matrixCoperta [numRiga][numColonna][i] = slotAffondato;
                     contaNavi[i]++;
                 }
                 else
                 {
                     printf("\n\n> Hai mancato il nemico");
-                    matrixCoperta [numRiga][numColonna][i] = 'X';
+                    matrixCoperta [numRiga][numColonna][i] = slotMancato;
                 }
                 Sleep(3000);
             }
         }
-        while (contaNavi[0] < totNavi && contaNavi[1] < totNavi);
-        if (contaNavi[0] > contaNavi[1])
-        {
-            printf("> Ha vinto il giocatore 1!");
-        }
-        else
-        {
-            printf("> Ha vinto il giocatore 2!");
-        }
-        break;
+    while (contaNavi[0] < totNavi && contaNavi[1] < totNavi);
+    if (contaNavi[0] > contaNavi[1])
+    {
+        printf("> Ha vinto il giocatore 1!");
     }
+    else
+    {
+        printf("> Ha vinto il giocatore 2!");
+    }
+    break;
+}
 
 }
 
@@ -288,8 +320,9 @@ void mappa (char matrix [righe][colonne][maxGiocatori], int giocatore, char matr
 void player (int giocatore)
 {
     system("cls");
-    if (giocatore == 1)
-    {        printf("     _______ _________ _______  _______  _______ _________ _______  _______  _______      _______\n");
+    if (giocatore != 0)
+    {
+        printf("     _______ _________ _______  _______  _______ _________ _______  _______  _______      _______\n");
         printf("    (  ____ \\\\__   __/(  ___  )(  ____ \\(  ___  )\\__   __/(  ___  )(  ____ )(  ____ \\    /____   )\n");
         printf("    | (    \\/   ) (   | (   ) || (    \\/| (   ) |   ) (   | (   ) || (    )|| (    \\/    \\/   )   |\n");
         printf("    | |         | |   | |   | || |      | (___) |   | |   | |   | || (____)|| (__            /   )\n");
