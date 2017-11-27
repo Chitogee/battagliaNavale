@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h> //sleep
+#include <windows.h>
 
 #define righe 10
 #define colonne 10
@@ -9,331 +9,324 @@
 #define slotCoperto '#'
 #define slotAffondato 'O'
 #define slotMancato 'X'
-#define maxGiocatori 2
+#define numGiocatori 2
 #define totNavi 20
 
-void mappa (char matrix [righe][colonne][maxGiocatori], int giocatore, char matrixCoperta [righe][colonne][maxGiocatori], int fase);
-void deployNavi (char tipoNave [], int rNave, int cNave, int numNave, int maxNave, char matrix [righe][colonne][maxGiocatori], int giocatore, char matrixCoperta [righe][colonne][maxGiocatori], int fase); // prototipo funzione
-void player (int giocatore);
+void grafica(int imgASCII);
+void mappaDeploy (int i, char matDeploy [][colonne][numGiocatori]);
+void mappaCoperta (int i, char matCoperta [][colonne][numGiocatori]);
+void attaccoNavi (int j, char matDeploy [][colonne][numGiocatori], char matCoperta [][colonne][numGiocatori]);
+int deployNavi (int i, char descNave [], int rNave, int cNave, int ordineNave, int maxNave, char matDeploy [][colonne][numGiocatori], int sommaNavi);
+int inputRiga ();
+int inputColonna ();
 
-void main()
+int main()
 {
-    int i, j, k, controlloInput, giocatore, fase;
-    int numRiga, numColonna, rNave, cNave, numNave, maxNave;
-    char mat [righe][colonne][maxGiocatori], matCoperta [righe][colonne][maxGiocatori], colonna, tipoNave [15];
+    char matDeploy[righe][colonne][numGiocatori], matCoperta[righe][colonne][numGiocatori];
+    int i, j, k, sommaNavi = 0, contaNavi[1];
 
-    for(i = 0; i < 10; i++)
+    for(i = 0; i < righe; i++)
     {
-        for(j = 0; j < 10; j++)
+        for(j = 0; j < colonne; j++)
         {
-            for(k = 0; k < maxGiocatori; k++)
+            for(k = 0; k < numGiocatori; k++)
             {
-                mat[i][j][k] = slotVuoto;
+                matDeploy[i][j][k] = slotVuoto;
                 matCoperta[i][j][k] = slotCoperto;
             }
         }
 
     }
-    printf("\n\n                                             |__\n");
-    printf("                                             |\\/\n");
-    printf("                                             ---\n");
-    printf("                                             / | [\n");
-    printf("                                      !      | |||\n");
-    printf("                                    _/|     _/|-++'\n");
-    printf("                                +  +--|    |--|--|_ |-\n");
-    printf("                             { /|__|  |/\\__|  |--- |||__/\n");
-    printf("                            +---------------___[}-_===_.'____                 /\\\n");
-    printf("                        ____`-' ||___-{]_| _[}-  |     |_[___\\==--            \\/   _\n");
-    printf("         __..._____--==/___]_|__|_____________________________[___\\==--____,------' .7\n");
-    printf("        |                                                                     BB-61/\n");
-    printf("         \\_________________________________________________________________________|\n\n");
-    printf("\n\n\n      ______   _______ __________________ _        _______  _______          _________ _______\n");
-    printf("    (  ___ \\ (  ___  )\\__   __/\\__   __/( \\      (  ____ \\(  ____ \\|\\     /|\\__   __/(  ____ )\n");
-    printf("    | (   ) )| (   ) |   ) (      ) (   | (      | (    \\/| (    \\/| )   ( |   ) (   | (    )|\n");
-    printf("    | (__/ / | (___) |   | |      | |   | |      | (__    | (_____ | (___) |   | |   | (____)|\n");
-    printf("    |  __ (  |  ___  |   | |      | |   | |      |  __)   (_____  )|  ___  |   | |   |  _____)\n");
-    printf("    | (  \\ \\ | (   ) |   | |      | |   | |      | (            ) || (   ) |   | |   | ( \n");
-    printf("    | )___) )| )   ( |   | |      | |   | (____/\\| (____/\\/\\____) || )   ( |___) (___| )\n");
-    printf("    |/ \\___/ |/     \\|   )_(      )_(   (_______/(_______/\\_______)|/     \\|\\_______/|/\n\n\n");
-    printf("                                 Clicca invio per continuare\n");
-    getchar();
-    fase = 0;
-    for (i = 0; i < maxGiocatori; i++)
+    grafica(10);
+
+    for (i = 0; i < numGiocatori; i++)
     {
-        player (i);
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del portaerei", 1, 4, 1, 1, mat, i, matCoperta, fase);
+        grafica(i);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi(i, "portaerei", 1, 4, 1, 1, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "primo incrociatore", 1, 3, 1, 2, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "secondo incrociatore", 3, 1, 2, 2, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "primo torpediniere", 2, 1, 1, 3, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "secondo torpediniere", 1, 2, 2, 3, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "terzo torpediniere", 2, 1, 3, 3, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "primo sommergibile", 1, 1, 1, 4, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "secondo sommergibile", 1, 1, 2, 4, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "terzo sommergibile", 1, 1, 3, 4, matDeploy, sommaNavi);
+        mappaDeploy(i, matDeploy);
+        sommaNavi = deployNavi (i, "quarto sommergibile", 1, 1, 4, 4, matDeploy, sommaNavi);
         system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del primo incrociatore", 1, 3, 1, 2, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del secondo incrociatore", 3, 1, 2, 2, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del primo torpediniere", 2, 1, 1, 3, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del secondo torpediniere", 1, 2, 2, 3, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del terzo torpediniere", 2, 1, 3, 3, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del primo sommergibile", 1, 1, 1, 4, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del secondo sommergibile", 1, 1, 2, 4, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del terzo sommergibile", 1, 1, 3, 4, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
-        deployNavi ("del quarto sommergibile", 1, 1, 4, 4, mat, i, matCoperta, fase);
-        system("cls");
-        mappa (mat, i, matCoperta, fase);
     }
-    fase = 1;
-    deployNavi ("del quarto sommergibile", 1, 1, 4, 4, mat, i, matCoperta, fase);
-
-}
-
-void deployNavi (char tipoNave [], int rNave, int cNave, int numNave, int maxNave, char matrix [righe][colonne][maxGiocatori], int giocatore, char matrixCoperta [righe][colonne][maxGiocatori], int fase)
-{
-
-    int i, j, controlloInput, numRiga, numColonna, slotOccupato, contaNavi [1] = {0, 0};
-    char colonna;
-
-    switch (fase)
+    sommaNavi /= 2;
+    do
     {
-    case 0:
-        printf("\n\n    _______");
-        for (i = 1; i < cNave; i++)
+        for (j = 1; j >= 0; j--)
         {
-            printf("______");
-        }
-        printf("\n    |     |");
-        for (i = 1; i < cNave; i++)
-        {
-            printf("     |");
-        }
-        printf("\n    |  X  |");
-        for (i = 1; i < cNave; i++)
-        {
-            printf("     |");
-        }
-        printf("\n    |_____|");
-        for (i = 1; i < cNave; i++)
-        {
-            printf("_____|");
-        }
+            grafica(!j);
+            mappaCoperta (j, matCoperta);
+            attaccoNavi(j, matDeploy, matCoperta);
+            system("cls");
 
-        for (i = 1; i < rNave; i++)
-        {
-            printf("\n    |     |");
-            printf("\n    |     |");
-            printf("\n    |_____|");
         }
-        printf("\n\n");
-        do
-        {
-            printf("\n> Seleziona la riga in cui porre il punto 'X' %s (%d/%d)", tipoNave, numNave, maxNave);
-            do
-            {
-                fflush(stdin);
-                printf("\n> ");
-                controlloInput = scanf("%d", &numRiga);
-                if (controlloInput != 1 || numRiga < 1 || numRiga > 10)
-                {
-                    printf("[!] Errore, inserisci un valore valido\n");
-                }
-            }
-            while (controlloInput != 1 || numRiga < 1 || numRiga > 10);
-            numRiga--;
-
-            printf("\n");
-            printf("> Seleziona la colonna in cui porre %s", tipoNave);
-            do
-            {
-                fflush(stdin);
-                printf("\n> ");
-                scanf("%c", &colonna);
-                colonna = toupper(colonna);
-                if (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J')
-                {
-                    printf("[!] Errore, inserisci un valore valido\n");
-                }
-            }
-            while (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J');
-            numColonna = colonna - 65; //Dato il valore 65 di A, sottraendo 65 si ha 0 = valore colonna matrix desiderato. B = 66; 66 - 65 = 1 colonna matrix
-
-            slotOccupato = 0;
-
-            for (i = 0; i < rNave; i++)
-            {
-                if (matrix [numRiga + i][numColonna][giocatore] == slotPieno)
-                {
-                    slotOccupato = 1;
-                }
-            }
-            for (i = 1; i < cNave; i++)
-            {
-                if (matrix [numRiga][numColonna + i][giocatore] == slotPieno)
-                {
-                    slotOccupato = 1;
-                }
-            }
-            if (slotOccupato == 1 || numRiga + rNave >= 11 || numColonna + cNave >= 11)
-            {
-                printf("\n[!] Errore, inserisci la nave in spazi validi\n\n");
-            }
-        }
-        while (slotOccupato == 1 || numRiga + rNave >= 11 || numColonna + cNave >= 11);
-        for (i = 0; i < rNave; i++)
-        {
-            matrix [numRiga + i][numColonna][giocatore] = slotPieno;
-        }
-        for (i = 1; i < cNave; i++)
-        {
-            matrix [numRiga][numColonna + i][giocatore] = slotPieno;
-        }
-        break;
-    case 1:
-        do
-        {
-            for (i = 0; i < maxGiocatori; i++)
-            {
-                player (i - 1);
-                mappa(matrix, i, matrixCoperta, fase);
-                do
-                {
-                    printf("\n> Seleziona la riga da attaccare");
-                    do
-                    {
-                        fflush(stdin);
-                        printf("\n> ");
-                        controlloInput = scanf("%d", &numRiga);
-                        if (controlloInput != 1 || numRiga < 1 || numRiga > 10)
-                        {
-                            printf("[!] Errore, inserisci un valore valido\n");
-                        }
-                    }
-                    while (controlloInput != 1 || numRiga < 1 || numRiga > 10);
-                    numRiga--;
-
-                    printf("\n");
-                    printf("> Seleziona la colonna da attaccare");
-                    do
-                    {
-                        fflush(stdin);
-                        printf("\n> ");
-                        scanf("%c", &colonna);
-                        colonna = toupper(colonna);
-                        if (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J')
-                        {
-                            printf("[!] Errore, inserisci un valore valido\n");
-                        }
-                    }
-                    while (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J');
-                    numColonna = colonna - 65;
-
-                    if (matrixCoperta [numRiga][numColonna][i] == slotAffondato || matrixCoperta [numRiga][numColonna][i] == slotMancato)
-                    {
-                        fflush(stdin);
-                        printf("[!] Errore, non puoi colpire nuovamente questo slot\n");
-                        getchar();
-                    }
-                }
-                while (matrixCoperta [numRiga][numColonna][i] == slotAffondato || matrixCoperta [numRiga][numColonna][i] == slotMancato);
-                if (matrix [numRiga][numColonna][i] == slotPieno)
-                {
-                    printf("\n\n> Hai colpito una nave nemica!");
-                    matrixCoperta [numRiga][numColonna][i] = slotAffondato;
-                    contaNavi[i]++;
-                }
-                else
-                {
-                    printf("\n\n> Hai mancato il nemico");
-                    matrixCoperta [numRiga][numColonna][i] = slotMancato;
-                }
-                Sleep(3000);
-            }
-        }
-    while (contaNavi[0] < totNavi && contaNavi[1] < totNavi);
-    if (contaNavi[0] > contaNavi[1])
+    }
+    while (contaNavi[0] < sommaNavi && contaNavi[1] < sommaNavi);
+    if (contaNavi[0] > contaNavi [1])
     {
         printf("> Ha vinto il giocatore 1!");
     }
     else
     {
-        printf("> Ha vinto il giocatore 2!");
-    }
-    break;
-}
-
-}
-
-void mappa (char matrix [righe][colonne][maxGiocatori], int giocatore, char matrixCoperta [righe][colonne][maxGiocatori], int fase)
-{
-    int i;
-
-    if (fase == 0)
-    {
-        printf("\n       A     B     C     D     E     F     G     H     I     J\n");
-        printf("    _____________________________________________________________\n");
-        for (i = 0; i < 10; i++)
+        if (contaNavi[0] < contaNavi [1])
         {
-            printf("    |     |     |     |     |     |     |     |     |     |     |\n");
-            if (i < 9)
-            {
-                printf("  %d", i + 1);
-            }
-            else
-            {
-                printf(" %d", i + 1);
-            }
-            printf(" |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |\n", matrix [i][0][giocatore], matrix [i][1][giocatore], matrix [i][2][giocatore], matrix [i][3][giocatore], matrix [i][4][giocatore], matrix [i][5][giocatore], matrix [i][6][giocatore], matrix [i][7][giocatore], matrix [i][8][giocatore], matrix [i][9][giocatore]);
-            printf("    |_____|_____|_____|_____|_____|_____|_____|_____|_____|_____|\n");
+            printf("> Ha vinto il giocatore 2!");
         }
+        else
+        {
+            printf("> I giocatori hanno pareggiato!");
+        }
+    }
+    return 0;
+}
+
+int deployNavi (int i, char descNave [], int rNave, int cNave, int ordineNave, int maxNave, char matDeploy [][colonne][numGiocatori], int sommaNavi)
+{
+
+    int j, k, numRiga, numColonna, slotOccupato;
+
+    printf("\n\n    _______");
+    for (j = 1; j < cNave; j++)
+    {
+        printf("______");
+    }
+    printf("\n    |     |");
+    for (j = 1; j < cNave; j++)
+    {
+        printf("     |");
+    }
+    printf("\n    |  X  |");
+    for (j = 1; j < cNave; j++)
+    {
+        printf("     |");
+    }
+    printf("\n    |_____|");
+    for (j = 1; j < cNave; j++)
+    {
+        printf("_____|");
+    }
+
+    for (j = 1; j < rNave; j++)
+    {
+        printf("\n    |     |");
+        printf("\n    |     |");
+        printf("\n    |_____|");
+    }
+    printf("\n\n");
+    do
+    {
+        printf("\n> Seleziona la riga in cui porre il punto 'X' del %s (%d/%d)", descNave, ordineNave, maxNave);
+        numRiga = inputRiga();
+        printf("\n");
+        printf("> Seleziona la colonna in cui porre il %s", descNave);
+        numColonna = inputColonna();
+
+        slotOccupato = 0;
+        for (j = 0; j < rNave; j++)
+        {
+            if (matDeploy [numRiga + j][numColonna][i] == slotPieno)
+            {
+                slotOccupato = 1;
+            }
+        }
+        for (j = 1; j < cNave; j++)
+        {
+            if (matDeploy [numRiga][numColonna + j][i] == slotPieno)
+            {
+                slotOccupato = 1;
+            }
+        }
+        if (slotOccupato == 1 || numRiga + rNave >= 11 || numColonna + cNave >= 11)
+        {
+            printf("\n[!] Errore, inserisci la nave in spazi validi\n\n");
+        }
+    }
+    while (slotOccupato == 1 || numRiga + rNave >= 11 || numColonna + cNave >= 11);
+    for (j = 0; j < rNave; j++)
+    {
+        matDeploy [numRiga + j][numColonna][i] = slotPieno;
+    }
+    for (j = 1; j < cNave; j++)
+    {
+        matDeploy [numRiga][numColonna + j][i] = slotPieno;
+    }
+    sommaNavi += cNave * rNave;
+    return sommaNavi;
+}
+
+void attaccoNavi (int j, char matDeploy [][colonne][numGiocatori], char matCoperta [][colonne][numGiocatori])
+{
+    int numRiga, numColonna, contaNavi[1];
+    do
+    {
+        printf("\n> Seleziona la riga da attaccare");
+        numRiga = inputRiga();
+
+        printf("\n> Seleziona la colonna da attaccare");
+        numColonna = inputColonna();
+
+        if (matCoperta [numRiga][numColonna][j] == slotAffondato || matCoperta [numRiga][numColonna][j] == slotMancato)
+        {
+            fflush(stdin);
+            printf("[!] Errore, non puoi colpire nuovamente questo slot\n");
+        }
+    }
+    while (matCoperta [numRiga][numColonna][j] == slotAffondato || matCoperta [numRiga][numColonna][j] == slotMancato);
+    if (matDeploy [numRiga][numColonna][j] == slotPieno)
+    {
+        printf("\n> Hai colpito una nave nemica!");
+        matCoperta [numRiga][numColonna][j] = slotAffondato;
+        contaNavi[j]++;
     }
     else
     {
-        printf("\n       A     B     C     D     E     F     G     H     I     J\n");
-        printf("    _____________________________________________________________\n");
-        for (i = 0; i < 10; i++)
-        {
-            printf("    |     |     |     |     |     |     |     |     |     |     |\n");
-            if (i < 9)
-            {
-                printf("  %d", i + 1);
-            }
-            else
-            {
-                printf(" %d", i + 1);
-            }
-            printf(" |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |  %c  |\n", matrixCoperta [i][0][giocatore], matrixCoperta [i][1][giocatore], matrixCoperta [i][2][giocatore], matrixCoperta [i][3][giocatore], matrixCoperta [i][4][giocatore], matrixCoperta [i][5][giocatore], matrixCoperta [i][6][giocatore], matrixCoperta [i][7][giocatore], matrixCoperta [i][8][giocatore], matrixCoperta [i][9][giocatore]);
-            printf("    |_____|_____|_____|_____|_____|_____|_____|_____|_____|_____|\n");
-        }
+        printf("\n> Hai mancato il nemico");
+        matCoperta [numRiga][numColonna][j] = slotMancato;
     }
+    Sleep(3000);
 }
 
-void player (int giocatore)
+int inputRiga ()
 {
+    int numRiga, controlloInput = 0;
+
+    do
+    {
+        fflush(stdin);
+        printf("\n> ");
+        controlloInput = scanf("%d", &numRiga);
+        if (controlloInput != 1 || numRiga < 1 || numRiga > 10)
+        {
+            printf("[!] Errore, inserisci un valore valido\n");
+        }
+    }
+    while (controlloInput != 1 || numRiga < 1 || numRiga > 10);
+    numRiga--;
+    return numRiga;
+}
+
+int inputColonna ()
+{
+    char colonna;
+    int numColonna;
+
+    do
+    {
+        fflush(stdin);
+        printf("\n> ");
+        scanf("%c", &colonna);
+        colonna = toupper(colonna);
+        if (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J')
+        {
+            printf("[!] Errore, inserisci un valore valido\n");
+        }
+    }
+    while (colonna != 'A' && colonna != 'B' && colonna != 'C' && colonna != 'D' && colonna != 'E' && colonna != 'F' && colonna != 'G' && colonna != 'H' && colonna != 'I' && colonna != 'J');
+    numColonna = colonna - 65; //Dato il valore 65 di A, sottraendo 65 si ha 0 = valore colonna matrix desiderato. B = 66; 66 - 65 = 1 colonna matrix
+    return numColonna;
+}
+
+void mappaDeploy (int i, char matDeploy [][colonne][numGiocatori])
+{
+    int j, k;
+
     system("cls");
-    if (giocatore != 0)
+    printf("\n       A     B     C     D     E     F     G     H     I     J\n");
+    printf("    _____________________________________________________________\n");
+    for (j = 0; j < righe; j++)
     {
-        printf("     _______ _________ _______  _______  _______ _________ _______  _______  _______      _______\n");
-        printf("    (  ____ \\\\__   __/(  ___  )(  ____ \\(  ___  )\\__   __/(  ___  )(  ____ )(  ____ \\    /____   )\n");
-        printf("    | (    \\/   ) (   | (   ) || (    \\/| (   ) |   ) (   | (   ) || (    )|| (    \\/    \\/   )   |\n");
-        printf("    | |         | |   | |   | || |      | (___) |   | |   | |   | || (____)|| (__            /   )\n");
-        printf("    | | ____    | |   | |   | || |      |  ___  |   | |   | |   | ||     __)|  __)         _/   /\n");
-        printf("    | | \\_  )   | |   | |   | || |      | (   ) |   | |   | |   | || (\\ (   | (           /   _/\n");
-        printf("    | (___) |___) (___| (___) || (____/\\| )   ( |   | |   | (___) || ) \\ \\__| (____/\\    (   (__/\\\n");
-        printf("    (_______)\\_______/(_______)(_______/|/     \\|   )_(   (_______)|/   \\__/(_______/    \\_______/\n");
-
+        printf("    |     |     |     |     |     |     |     |     |     |     |\n");
+        if (j < 9)
+        {
+            printf("  %d", j + 1);
+        }
+        else
+        {
+            printf(" %d", j + 1);
+        }
+        printf(" |  %c  |", matDeploy [j][0][i]);
+        for (k = 1; k < colonne; k++)
+        {
+            printf("  %c  |", matDeploy [j][k][i]);
+        }
+        printf("\n    |_____|_____|_____|_____|_____|_____|_____|_____|_____|_____|\n");
     }
-    else
+}
+
+void mappaCoperta (int i, char matCoperta [][colonne][numGiocatori])
+{
+    int j, k;
+
+    system("cls");
+    printf("\n       A     B     C     D     E     F     G     H     I     J\n");
+    printf("    _____________________________________________________________\n");
+    for (j = 0; j < righe; j++)
     {
+        printf("    |     |     |     |     |     |     |     |     |     |     |\n");
+        if (j < 9)
+        {
+            printf("  %d", j + 1);
+        }
+        else
+        {
+            printf(" %d", j + 1);
+        }
+        printf(" |  %c  |", matCoperta [j][0][i]);
+        for (k = 1; k < colonne; k++)
+        {
+            printf("  %c  |", matCoperta [j][k][i]);
+        }
+        printf("\n    |_____|_____|_____|_____|_____|_____|_____|_____|_____|_____|\n");
+    }
+}
+
+void grafica(int imgASCII)
+{
+    switch (imgASCII)
+    {
+    case 10:
+        printf("v2.2 - Falcone Federico - 27/11/2017");
+        printf("\n\n                                             |__\n");
+        printf("                                             |\\/\n");
+        printf("                                             ---\n");
+        printf("                                             / | [\n");
+        printf("                                      !      | |||\n");
+        printf("                                    _/|     _/|-++'\n");
+        printf("                                +  +--|    |--|--|_ |-\n");
+        printf("                             { /|__|  |/\\__|  |--- |||__/\n");
+        printf("                            +---------------___[}-_===_.'____                 /\\\n");
+        printf("                        ____`-' ||___-{]_| _[}-  |     |_[___\\==--            \\/   _\n");
+        printf("         __..._____--==/___]_|__|_____________________________[___\\==--____,------' .7\n");
+        printf("        |                                                                     BB-61/\n");
+        printf("         \\_________________________________________________________________________|\n\n");
+        printf("\n\n     ______   _______ __________________ _        _______  _______          _________ _______\n");
+        printf("    (  ___ \\ (  ___  )\\__   __/\\__   __/( \\      (  ____ \\(  ____ \\|\\     /|\\__   __/(  ____ )\n");
+        printf("    | (   ) )| (   ) |   ) (      ) (   | (      | (    \\/| (    \\/| )   ( |   ) (   | (    )|\n");
+        printf("    | (__/ / | (___) |   | |      | |   | |      | (__    | (_____ | (___) |   | |   | (____)|\n");
+        printf("    |  __ (  |  ___  |   | |      | |   | |      |  __)   (_____  )|  ___  |   | |   |  _____)\n");
+        printf("    | (  \\ \\ | (   ) |   | |      | |   | |      | (            ) || (   ) |   | |   | ( \n");
+        printf("    | )___) )| )   ( |   | |      | |   | (____/\\| (____/\\/\\____) || )   ( |___) (___| )\n");
+        printf("    |/ \\___/ |/     \\|   )_(      )_(   (_______/(_______/\\_______)|/     \\|\\_______/|/\n\n\n");
+        printf("                                 Premi invio per continuare\n");
+        getchar();
+        system("cls");
+        break;
+    case 0:
         printf("     _______ _________ _______  _______  _______ _________ _______  _______  _______      ___\n");
         printf("    (  ____ \\\\__   __/(  ___  )(  ____ \\(  ___  )\\__   __/(  ___  )(  ____ )(  ____ \\    /   \\\n");
         printf("    | (    \\/   ) (   | (   ) || (    \\/| (   ) |   ) (   | (   ) || (    )|| (    \\/    \\/) )\n");
@@ -342,18 +335,21 @@ void player (int giocatore)
         printf("    | | \\_  )   | |   | |   | || |      | (   ) |   | |   | |   | || (\\ (   | (            | |\n");
         printf("    | (___) |___) (___| (___) || (____/\\| )   ( |   | |   | (___) || ) \\ \\__| (____/\\    __) (_\n");
         printf("    (_______)\\_______/(_______)(_______/|/     \\|   )_(   (_______)|/   \\__/(_______/    \\____/\n");
+        Sleep(3000);
+        system("cls");
+        break;
+    case 1:
+        printf("     _______ _________ _______  _______  _______ _________ _______  _______  _______      _______\n");
+        printf("    (  ____ \\\\__   __/(  ___  )(  ____ \\(  ___  )\\__   __/(  ___  )(  ____ )(  ____ \\    /____   )\n");
+        printf("    | (    \\/   ) (   | (   ) || (    \\/| (   ) |   ) (   | (   ) || (    )|| (    \\/    \\/   )   |\n");
+        printf("    | |         | |   | |   | || |      | (___) |   | |   | |   | || (____)|| (__            /   )\n");
+        printf("    | | ____    | |   | |   | || |      |  ___  |   | |   | |   | ||     __)|  __)         _/   /\n");
+        printf("    | | \\_  )   | |   | |   | || |      | (   ) |   | |   | |   | || (\\ (   | (           /   _/\n");
+        printf("    | (___) |___) (___| (___) || (____/\\| )   ( |   | |   | (___) || ) \\ \\__| (____/\\    (   (__/\\\n");
+        printf("    (_______)\\_______/(_______)(_______/|/     \\|   )_(   (_______)|/   \\__/(_______/    \\_______/\n");
+        Sleep(3000);
+        system("cls");
+        break;
     }
-    Sleep(3000);
-    system("cls");
 }
-
-
-/*
-       A     B     C     D     E     F     G     H     I     L
-    _____________________________________________________________
-    |     |     |     |     |     |     |     |     |     |     |
-  1 |  X  |  X  |  X  |  X  |  X  |  X  |  X  |  X  |  X  |  X  |
-    |_____|_____|_____|_____|_____|_____|_____|_____|_____|_____|
-*/
-
 
